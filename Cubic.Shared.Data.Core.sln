@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cubic.Shared.Data.Core", "Cubic.Shared.Data.Core.csproj", "{0125E63B-9F14-4EC4-9E96-D22C956BEE5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cubic.Shared.Data.Core", "src\Cubic.Shared.Data.Core\Cubic.Shared.Data.Core.csproj", "{0125E63B-9F14-4EC4-9E96-D22C956BEE5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

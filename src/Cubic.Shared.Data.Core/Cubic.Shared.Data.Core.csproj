@@ -6,4 +6,8 @@
     <Authors>nifix</Authors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Cubic.Shared.Core" Version="0.1.0" />
+  </ItemGroup>
+
 </Project>

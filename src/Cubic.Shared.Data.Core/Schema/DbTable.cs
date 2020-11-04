@@ -7,11 +7,10 @@ namespace Cubic.Shared.Data.Core.Schema
   public class DbTable : IDbTable
   {
     private readonly List<IDbColumn> _columns;
-    private readonly string _name;
 
     public DbTable(string name)
     {
-      _name = name;
+      Name = name;
       _columns = new List<IDbColumn>();
     }
 
@@ -20,7 +19,7 @@ namespace Cubic.Shared.Data.Core.Schema
       _columns.AddRange(columns);
     }
 
-    public string Name => _name;
+    public string Name { get; }
 
     public IEnumerable<IDbColumn> Columns => _columns;
 

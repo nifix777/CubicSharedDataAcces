@@ -7,7 +7,7 @@ namespace Cubic.Shared.Data.Core.Schema
   public class DbColumn : IDbColumn
   {
 
-    public DbColumn(string name, int? ordinalPosition, bool? isReadOnly, int? maxLength, bool? allowDBNull, bool? isKey, bool? isRowVersion, bool? isIdentity, bool? isLong, Type dataType)
+    public DbColumn(string name, int? ordinalPosition, bool? isReadOnly, int? maxLength, bool? allowDBNull, bool? isKey, bool? isRowVersion, bool? isIdentity, bool? isLong, Type dataType, string dataTypeName, object defaultValue = null)
     {
       this.ColumnName = name;
       this.ColumnOrdinal = ordinalPosition;
@@ -19,6 +19,8 @@ namespace Cubic.Shared.Data.Core.Schema
       IsIdentity = isIdentity;
       IsLong = isLong;
       DataType = dataType;
+      DbTypeName = dataTypeName;
+      DefaultValue = defaultValue;
     }
 
     public bool? AllowDBNull { get; set; }
@@ -44,7 +46,10 @@ namespace Cubic.Shared.Data.Core.Schema
     public int? NumericScale { get; set; }
     //public string UdtAssemblyQualifiedName { get; set; }
     public Type DataType { get; set; }
-    //public string DataTypeName { get; set; }
+
+    public string DbTypeName { get; set; }
+
+    public object DefaultValue { get; set; }
     public virtual object this[string property]
     {
       get
@@ -95,8 +100,8 @@ namespace Cubic.Shared.Data.Core.Schema
           //  return UdtAssemblyQualifiedName;
           case nameof(DataType):
             return DataType;
-          //case nameof(DataTypeName):
-          //  return DataTypeName;
+          case nameof(DbTypeName):
+            return DbTypeName;
           default:
             throw new ArgumentOutOfRangeException(nameof(property));
         }

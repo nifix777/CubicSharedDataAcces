@@ -27,6 +27,11 @@ namespace Cubic.Shared.Data.Core
       }
     }
 
+    public DbAccess()
+    {
+      ConnectionStringBuilder = new DbConnectionStringBuilder();
+      Initialize();
+    }
     public DbAccess(string dbstring, string accesstring) : base(accesstring)
     {
       ConnectionStringBuilder = new DbConnectionStringBuilder();

@@ -43,7 +43,8 @@ namespace Cubic.Shared.Data.Core.Schema
       NumericScale = GetIDbColumnValue<int?>(SchemaTableColumn.NumericScale);
       //UdtAssemblyQualifiedName = GetIDbColumnValue<string>("UdtAssemblyQualifiedName");
       DataType = GetIDbColumnValue<Type>(SchemaTableColumn.DataType);
-      //DataTypeName = GetIDbColumnValue<string>("DataTypeName");
+      DbTypeName = GetIDbColumnValue<string>(SchemaTableColumn.DataType);
+      DefaultValue = GetIDbColumnValue<object>(SchemaTableOptionalColumn.DefaultValue);
     }
 
     private T GetIDbColumnValue<T>(string columnName)

@@ -10,32 +10,36 @@ namespace Cubic.Shared.Data.Core
 {
   public static class DbParameterExtensions
   {
-    //private static DbProviderFactory GetProvider<TConnection>(TConnection connection) where TConnection : DbConnection
-    //{
-    //  return (DbProviderFactory)typeof(TConnection).GetProperty("DbProviderFactory").GetValue(connection);
-    //}
-    //public static string QuoteIdentifier(this DbConnection connection, string idendtifier)
-    //{
-    //  return connection.Get
-    //}
 
-    public static IDataParameter AddNamedParameter(this IDbCommand command, string name, object value, Type type, Func<Type, DbType> typeMappingFunc = null)
+    public static string GetParameterName(DbConnection connection, string name)
+    {
+      var factory = GetProvider(connection);
+      return (string)typeof(DbCommandBuilder).GetMethod("GetParameterName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] { typeof(string) }, null).Invoke(factory.CreateCommandBuilder(), new object[] { name });
+    }
+
+    private static DbProviderFactory GetProvider(DbConnection connection)
+    {
+      return (DbProviderFactory)typeof(DbConnection).GetProperty("DbProviderFactory", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(connection);
+    }
+
+    public static IDataParameter CreateParameter(this DbCommand command, string name, object value, Type type, Func<Type, DbType> typeMappingFunc = null)
     {
       var typeMappingFunction = typeMappingFunc ?? DbTypeMapping.GetDbType;
       var parameter = command.CreateParameter();
-      parameter.ParameterName = name;
+      //parameter.ParameterName = name;
+      parameter.ParameterName = GetParameterName(command.Connection);
       parameter.Value = value ?? DBNull.Value;
       parameter.DbType = typeMappingFunction(type);
 
-      command.Parameters.Add(parameter);
+      //command.Parameters.Add(parameter);
 
       return parameter;
     }
 
-    public static IDataParameter AddNamedParameter(this IDbCommand command, string name, object value, DbType? type = null)
+    public static IDataParameter CreateParameter(this DbCommand command, string name, object value, DbType? type = null)
     {
       var parameter = command.CreateParameter();
-      parameter.ParameterName = name;
+      parameter.ParameterName = GetParameterName(command.Connection);
       parameter.Value = value ?? DBNull.Value;
 
       if (type.HasValue)
@@ -43,40 +47,42 @@ namespace Cubic.Shared.Data.Core
         parameter.DbType = type.Value;
       }
 
-      command.Parameters.Add(parameter);
+      //command.Parameters.Add(parameter);
 
       return parameter;
     }
 
-    public static IDbCommand With<TValue>(this IDbCommand command, string name, TValue value)
+    public static DbCommand AddInParameter(this DbCommand command, string name, object value, DbType type = null)
     {
-      var parameter = command.CreateParameter();
-      parameter.ParameterName = name;
-      parameter.Value = value.IsNull() ? DBNull.Value : (object)value;
-      command.Parameters.Add(parameter);
-
+      var cmd = CreateParameter(command, name, value, type);
+      cmd.Direction = ParameterDirection.Input;
+      command.Parameters.Add(cmd);
       return command;
     }
 
-    public static IDbCommand With(this IDbCommand command, string name, object value)
+    public static DbCommand AddInParameter<TValue>(this DbCommand command, string name, TValue value, Func<Type, DbType> typeMappingFunc = null)
     {
-      var parameter = command.CreateParameter();
-      parameter.ParameterName = name;
-      parameter.Value = value ?? DBNull.Value;
-      command.Parameters.Add(parameter);
-
+      var cmd = CreateParameter(command, name, value, type);
+      cmd.Direction = ParameterDirection.Input;
+      command.Parameters.Add(cmd);
       return command;
     }
 
-    public static IDbCommand With(this IDbCommand command, string name, object value, DbType dbType)
+    public static DbCommand AddOutParameter(this DbCommand command, string name, object value, DbType type = null)
     {
-      var parameter = command.CreateParameter();
-      parameter.ParameterName = name;
-      parameter.Value = value ?? DBNull.Value;
-      parameter.DbType = dbType;
-      command.Parameters.Add(parameter);
-
+      var cmd = CreateParameter(command, name, value, type);
+      cmd.Direction = ParameterDirection.Output;
+      command.Parameters.Add(cmd);
       return command;
     }
+
+    public static DbCommand AddOutParameter<TValue>(this DbCommand command, string name, TValue value, Func<Type, DbType> typeMappingFunc = null)
+    {
+      var cmd = CreateParameter(command, name, value, type);
+      cmd.Direction = ParameterDirection.Output;
+      command.Parameters.Add(cmd);
+      return command;
+    }
+
   }
 }

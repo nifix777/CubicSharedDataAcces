@@ -18,7 +18,9 @@ namespace Cubic.Shared.Data.Core.Schema
     int? ColumnOrdinal { get;  }
     int? ColumnSize { get;  }
     Type DataType { get;  }
-    //string DataTypeName { get;  }
+
+    object DefaultValue { get; }
+    string DbTypeName { get; }
     bool? IsAliased { get;  }
     bool? IsAutoIncrement { get; }
     bool? IsExpression { get; }

@@ -36,7 +36,7 @@ namespace Cubic.Shared.Data.Core.Schema
 
     public void AddColumn(string name, int ordinalPosition, bool isReadOnly, int maxLength, bool allowDBNull, bool isKey, bool isIdentity, bool isRowVersion, bool isLong, Type dataType)
     {
-      this.AddColumn(new DbColumn(name, ordinalPosition, isReadOnly, maxLength, allowDBNull, isKey, isRowVersion, isIdentity, isLong, dataType));
+      this.AddColumn(new DbColumn(name, ordinalPosition, isReadOnly, maxLength, allowDBNull, isKey, isRowVersion, isIdentity, isLong, dataType, string.Empty));
     }
 
     public void AddColumn(IDbColumn column)

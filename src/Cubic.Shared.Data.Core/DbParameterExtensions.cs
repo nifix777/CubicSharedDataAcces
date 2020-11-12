@@ -27,7 +27,7 @@ namespace Cubic.Shared.Data.Core
       var typeMappingFunction = typeMappingFunc ?? DbTypeMapping.GetDbType;
       var parameter = command.CreateParameter();
       //parameter.ParameterName = name;
-      parameter.ParameterName = GetParameterName(command.Connection);
+      parameter.ParameterName = GetParameterName(command.Connection, name);
       parameter.Value = value ?? DBNull.Value;
       parameter.DbType = typeMappingFunction(type);
 
@@ -39,7 +39,7 @@ namespace Cubic.Shared.Data.Core
     public static IDataParameter CreateParameter(this DbCommand command, string name, object value, DbType? type = null)
     {
       var parameter = command.CreateParameter();
-      parameter.ParameterName = GetParameterName(command.Connection);
+      parameter.ParameterName = GetParameterName(command.Connection, name);
       parameter.Value = value ?? DBNull.Value;
 
       if (type.HasValue)
@@ -52,7 +52,7 @@ namespace Cubic.Shared.Data.Core
       return parameter;
     }
 
-    public static DbCommand AddInParameter(this DbCommand command, string name, object value, DbType type = null)
+    public static DbCommand AddInParameter(this DbCommand command, string name, object value, DbType? type = null)
     {
       var cmd = CreateParameter(command, name, value, type);
       cmd.Direction = ParameterDirection.Input;
@@ -62,13 +62,13 @@ namespace Cubic.Shared.Data.Core
 
     public static DbCommand AddInParameter<TValue>(this DbCommand command, string name, TValue value, Func<Type, DbType> typeMappingFunc = null)
     {
-      var cmd = CreateParameter(command, name, value, type);
+      var cmd = CreateParameter(command, name, value, typeof(TValue), typeMappingFunc);
       cmd.Direction = ParameterDirection.Input;
       command.Parameters.Add(cmd);
       return command;
     }
 
-    public static DbCommand AddOutParameter(this DbCommand command, string name, object value, DbType type = null)
+    public static DbCommand AddOutParameter(this DbCommand command, string name, object value, DbType? type = null)
     {
       var cmd = CreateParameter(command, name, value, type);
       cmd.Direction = ParameterDirection.Output;
@@ -78,7 +78,7 @@ namespace Cubic.Shared.Data.Core
 
     public static DbCommand AddOutParameter<TValue>(this DbCommand command, string name, TValue value, Func<Type, DbType> typeMappingFunc = null)
     {
-      var cmd = CreateParameter(command, name, value, type);
+      var cmd = CreateParameter(command, name, value, typeof(TValue), typeMappingFunc);
       cmd.Direction = ParameterDirection.Output;
       command.Parameters.Add(cmd);
       return command;

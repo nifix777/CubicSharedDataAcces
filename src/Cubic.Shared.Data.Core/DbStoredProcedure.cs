@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cubic.Shared.Data.Core
@@ -33,15 +34,15 @@ namespace Cubic.Shared.Data.Core
       return cmd;
     }
 
-    public IDataReader Invoke()
+    public DbDataReader Invoke()
     {
       var cmd = CreateCommand();
       return cmd.ExecuteReader();
     }
 
-    public Task<IDataReader> InvokeAsync(CancellationToken cancellationToken = default)
+    public async Task<DbDataReader> InvokeAsync(CancellationToken cancellationToken = default)
     {
-      var cmd = var cmd = CreateCommand();
+      var cmd = CreateCommand();
 
       return await cmd.ExecuteReaderAsync(cancellationToken);
     }
@@ -50,10 +51,10 @@ namespace Cubic.Shared.Data.Core
     {
       var cmd = CreateCommand();
 
-      return await cmd.ExecuteReaderAsync(cancellationToken);
+      return cmd.ExecuteScalar();
     }
 
-    public Task<object> InvokeScalarAsync(CancellationToken cancellationToken = default)
+    public async Task<object> InvokeScalarAsync(CancellationToken cancellationToken = default)
     {
       var cmd = CreateCommand();
 

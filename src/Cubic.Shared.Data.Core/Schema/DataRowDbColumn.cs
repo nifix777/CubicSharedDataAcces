@@ -11,7 +11,7 @@ namespace Cubic.Shared.Data.Core.Schema
     private DataColumnCollection _schemaColumns;
     private DataRow _schemaRow;
 
-    public DataRowDbColumn(DataRow readerSchemaRow, DataColumnCollection readerSchemaColumns) : base(string.Empty, null, null, null, null, null, null, null, null, null)
+    public DataRowDbColumn(DataRow readerSchemaRow, DataColumnCollection readerSchemaColumns) : base(string.Empty, null, null, null, null, null, null, null, null, null, null)
     {
       _schemaRow = readerSchemaRow;
       _schemaColumns = readerSchemaColumns;

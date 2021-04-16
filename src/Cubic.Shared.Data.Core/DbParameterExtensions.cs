@@ -4,22 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Reflection;
 using System.Text;
 
 namespace Cubic.Shared.Data.Core
 {
   public static class DbParameterExtensions
   {
+    private static PropertyInfo DbProviderFactoryMethod = typeof(DbConnection).GetProperty("DbProviderFactory", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
+    private static MethodInfo GetParameterNameMethod = typeof(DbCommandBuilder).GetMethod("GetParameterName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
     public static string GetParameterName(DbConnection connection, string name)
     {
       var factory = GetProvider(connection);
-      return (string)typeof(DbCommandBuilder).GetMethod("GetParameterName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] { typeof(string) }, null).Invoke(factory.CreateCommandBuilder(), new object[] { name });
+      return (string)GetParameterNameMethod.Invoke(factory.CreateCommandBuilder(), new object[] { name });
     }
 
     private static DbProviderFactory GetProvider(DbConnection connection)
     {
-      return (DbProviderFactory)typeof(DbConnection).GetProperty("DbProviderFactory", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(connection);
+      return (DbProviderFactory)DbProviderFactoryMethod.GetValue(connection);
     }
 
     public static IDataParameter CreateParameter(this DbCommand command, string name, object value, Type type, Func<Type, DbType> typeMappingFunc = null)

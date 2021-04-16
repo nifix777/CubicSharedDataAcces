@@ -14,11 +14,15 @@ namespace Cubic.Shared.Data.Core
 
     private readonly DbConnection _conn;
 
+    private DbCommand _command;
+    private bool disposedValue;
+
     public DbStoredProcedure(DbConnection conn, string name)
     {
       _conn = conn ?? throw new ArgumentNullException(nameof(conn));
       _name = name ?? throw new ArgumentNullException(nameof(name));
       Parameters = new List<IDbDataParameter>();
+      _command = CreateCommand();
     }
 
     public string Name => _name;

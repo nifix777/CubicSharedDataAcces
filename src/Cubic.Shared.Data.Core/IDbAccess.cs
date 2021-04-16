@@ -8,7 +8,7 @@
 
     string ApplicationName { get; set; }
 
-    string WorkstationID { get; set; }
+    string Client { get; set; }
 
     int EnhancedTimeout { get; set; }
 

@@ -42,13 +42,13 @@ namespace Cubic.Shared.Data.Core
 
     protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
     {
-      return _conn.BeginTransaction(IsolationLevel.ReadCommitted);
+      return _conn.BeginTransaction(IsolationLevel.ReadUncommitted);
     }
 
     protected override DbCommand CreateDbCommand()
     {
       var command = _conn.CreateCommand();
-      command.Transaction = BeginTransaction(IsolationLevel.ReadCommitted);
+      command.Transaction = BeginTransaction(IsolationLevel.ReadUncommitted);
       return command;
     }
 

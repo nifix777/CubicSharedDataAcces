@@ -42,6 +42,23 @@ namespace Cubic.Shared.Data.Core.Schema
       return new DbTable(tablename, connection.GetTableSchema(tablename));
     }
 
+    public static IReadOnlyList<IDbTable> GetTableInfos(this DbConnection connection)
+    {
+      List<IDbTable> tables = new List<IDbTable>();
+      // Specify the restrictions.  
+      string[] restrictions = new string[4];
+      restrictions[1] = connection.Database;
+
+      DataTable schemaTable = connection.GetSchema(DbMetaDataCollectionNames.MetaDataCollections, restrictions);
+      foreach (DataRow row in schemaTable.Rows)
+      {
+        tables.Add(connection.GetTableInfo(row[DbMetaDataColumnNames.CollectionName].ToString()));
+      }
+
+      return tables.AsReadOnly();
+      
+    }
+
     public static bool CanGetColumnSchema(this IDataReader reader)
     {
       return reader is DbDataReader;

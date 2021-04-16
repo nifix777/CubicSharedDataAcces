@@ -24,7 +24,7 @@ namespace Cubic.Shared.Data.Core
             { typeof(byte), DbType.Byte },
             { typeof(byte?), DbType.Byte },
             { typeof(byte[]), DbType.Binary },
-            //{ typeof(char), DbType.Boolean },
+            { typeof(char), DbType.StringFixedLength },
             { typeof(DateTime), DbType.DateTime },
             { typeof(DateTime?), DbType.DateTime },
             { typeof(DateTimeOffset), DbType.DateTimeOffset },

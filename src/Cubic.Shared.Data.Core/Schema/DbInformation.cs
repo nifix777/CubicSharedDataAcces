@@ -31,6 +31,7 @@ namespace Cubic.Shared.Data.Core.Schema
     private readonly DataColumn ParameterNameMaxLengthColumn;
 
     private readonly DataColumn DataSourceProductNameColumn;
+
     private readonly DataColumn DataSourceProductVersionColumn;
 
     private readonly Type _dbConnectionType;
@@ -71,14 +72,13 @@ namespace Cubic.Shared.Data.Core.Schema
 
     public int ParameterNameMaxLength => Main[ParameterNameMaxLengthColumn].ToInt32();
 
-    public string ProductName => Main[StringLiteralPatternColumn].ToString();
+    public string ProductName => Main[DataSourceProductNameColumn].ToString();
 
     public string ProductVersionColumn => Main[DataSourceProductVersionColumn].ToString();
 
     public string GetParameterExpression(string parameterName, bool validate = false)
     {
-      string format = string.Empty;
-      format = _parameterPrefixCache.TryGetValue(_dbConnectionType, out format) ? format : ParameterMarkerFormat;
+      string format = _parameterPrefixCache.TryGetValue(_dbConnectionType, out format) ? format : ParameterMarkerFormat;
       var fullName = string.Format(format, parameterName.Trim());
 
       if (validate)

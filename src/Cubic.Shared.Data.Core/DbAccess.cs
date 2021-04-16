@@ -101,10 +101,10 @@ namespace Cubic.Shared.Data.Core
       set => ConnectionStringBuilder[nameof(ApplicationName)] = value;
     }
 
-    public virtual string WorkstationID
+    public virtual string Client
     {
-      get => ConnectionStringBuilder[nameof(WorkstationID)].ToString();
-      set => ConnectionStringBuilder[nameof(WorkstationID)] = value;
+      get => ConnectionStringBuilder[nameof(Client)].ToString();
+      set => ConnectionStringBuilder[nameof(Client)] = value;
     }
 
     public int EnhancedTimeout
@@ -127,34 +127,40 @@ namespace Cubic.Shared.Data.Core
     //  set { throw new NotImplementedException(); }
     //}
 
-    public virtual string DataSource
+    public virtual string Server
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return ConnectionStringBuilder[nameof(Server)].ToString(); }
+      set { ConnectionStringBuilder[nameof(Server)] = value; }
+    }
+
+    public virtual string Database
+    {
+      get { return ConnectionStringBuilder[nameof(Database)].ToString(); }
+      set { ConnectionStringBuilder[nameof(Database)] = value; }
     }
 
     public virtual string UserId
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return ConnectionStringBuilder[nameof(UserId)].ToString(); }
+      set { ConnectionStringBuilder[nameof(UserId)] = value; }
     }
 
     public virtual string Password
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return ConnectionStringBuilder[nameof(Password)].ToString(); }
+      set { ConnectionStringBuilder[nameof(Password)] = value; }
     }
 
     public virtual bool IntegratedSecurity
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return ConnectionStringBuilder.GetValueOrDefault(nameof(IntegratedSecurity), false).ToBool(); }
+      set { ConnectionStringBuilder[nameof(IntegratedSecurity)] = value; }
     }
 
     public virtual int Port
     {
-      get { throw new NotImplementedException(); }
-      set { throw new NotImplementedException(); }
+      get { return ConnectionStringBuilder.GetValueOrDefault(nameof(Port), 0).ToInt32(); }
+      set { ConnectionStringBuilder[nameof(Port)] = value; }
     }
 
     public virtual bool Pooling

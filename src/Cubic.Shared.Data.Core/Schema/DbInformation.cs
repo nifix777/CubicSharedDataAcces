@@ -34,6 +34,8 @@ namespace Cubic.Shared.Data.Core.Schema
 
     private readonly DataColumn DataSourceProductVersionColumn;
 
+    public DataColumn IdentifierPatternColumn { get; }
+
     private readonly Type _dbConnectionType;
 
     public static DbInformation Create(DbConnection connection)
@@ -55,7 +57,7 @@ namespace Cubic.Shared.Data.Core.Schema
       ParameterMarkerPatternColumn = _dbInfos.Columns[DbMetaDataColumnNames.ParameterMarkerPattern];
       DataSourceProductNameColumn = _dbInfos.Columns[DbMetaDataColumnNames.DataSourceProductName];
       DataSourceProductVersionColumn = _dbInfos.Columns[DbMetaDataColumnNames.DataSourceProductVersion];
-
+      IdentifierPatternColumn = _dbInfos.Columns[DbMetaDataColumnNames.IdentifierPattern];
 
       _dbConnectionType = dbConnectionType;
     }
@@ -67,6 +69,8 @@ namespace Cubic.Shared.Data.Core.Schema
     public string StatementSeparatorPattern => Main[StatementSeparatorPatternColumn].ToString();
 
     public string StringLiteralPattern => Main[StringLiteralPatternColumn].ToString();
+
+    public string IdentifierPattern => Main[IdentifierPatternColumn].ToString();
 
     public string ParameterNamePattern => Main[ParameterNamePatternColumn].ToString();
 

@@ -14,7 +14,8 @@
 
     System.Data.CommandBehavior DefaultCommandBehavior { get; set; }
 
-    string DataSource { get; set; }
+    string Database { get; set; }
+    string Server { get; set; }
 
     int Port { get; set; }
 

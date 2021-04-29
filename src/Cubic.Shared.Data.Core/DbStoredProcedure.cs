@@ -15,54 +15,54 @@ namespace Cubic.Shared.Data.Core
     private readonly DbConnection _conn;
 
     private DbCommand _command;
-    private bool disposedValue;
 
     public DbStoredProcedure(DbConnection conn, string name)
     {
       _conn = conn ?? throw new ArgumentNullException(nameof(conn));
       _name = name ?? throw new ArgumentNullException(nameof(name));
-      Parameters = new List<IDbDataParameter>();
+      //Parameters = new List<IDbDataParameter>();
       _command = CreateCommand();
     }
 
     public string Name => _name;
 
-    public IList<IDbDataParameter> Parameters { get; private set; }
+    //public ICollection<IDbDataParameter> Parameters { get; private set; }
+    public DbParameterCollection Parameters => _command.Parameters;
 
     private DbCommand CreateCommand()
     {
       var cmd = _conn.CreateCommand();
       cmd.CommandType = CommandType.StoredProcedure;
       cmd.CommandText = _name;
-      cmd.Parameters.AddRange(Parameters);
+      //cmd.Parameters.AddRange(Parameters);
       return cmd;
     }
 
     public DbDataReader Invoke()
     {
-      var cmd = CreateCommand();
-      return cmd.ExecuteReader();
+      //var cmd = CreateCommand();
+      return _command.ExecuteReader();
     }
 
     public async Task<DbDataReader> InvokeAsync(CancellationToken cancellationToken = default)
     {
-      var cmd = CreateCommand();
+      //var cmd = CreateCommand();
 
-      return await cmd.ExecuteReaderAsync(cancellationToken);
+      return await _command.ExecuteReaderAsync(cancellationToken);
     }
 
     public object InvokeScalar()
     {
-      var cmd = CreateCommand();
+      //var cmd = CreateCommand();
 
-      return cmd.ExecuteScalar();
+      return _command.ExecuteScalar();
     }
 
     public async Task<object> InvokeScalarAsync(CancellationToken cancellationToken = default)
     {
-      var cmd = CreateCommand();
+      //var cmd = CreateCommand();
 
-      return await cmd.ExecuteScalarAsync(cancellationToken);
+      return await _command.ExecuteScalarAsync(cancellationToken);
     }
   }
 }

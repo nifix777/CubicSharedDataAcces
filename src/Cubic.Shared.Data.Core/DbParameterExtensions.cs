@@ -11,18 +11,11 @@ namespace Cubic.Shared.Data.Core
 {
   public static class DbParameterExtensions
   {
-    private static PropertyInfo DbProviderFactoryMethod = typeof(DbConnection).GetProperty("DbProviderFactory", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-
     private static MethodInfo GetParameterNameMethod = typeof(DbCommandBuilder).GetMethod("GetParameterName", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, new[] { typeof(string) }, null);
     public static string GetParameterName(DbConnection connection, string name)
     {
-      var factory = GetProvider(connection);
+      var factory = DbConnectionExtensions.GetProvider(connection);
       return (string)GetParameterNameMethod.Invoke(factory.CreateCommandBuilder(), new object[] { name });
-    }
-
-    private static DbProviderFactory GetProvider(DbConnection connection)
-    {
-      return (DbProviderFactory)DbProviderFactoryMethod.GetValue(connection);
     }
 
     public static IDataParameter CreateParameter(this DbCommand command, string name, object value, Type type, Func<Type, DbType> typeMappingFunc = null)

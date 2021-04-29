@@ -12,7 +12,7 @@ namespace Cubic.Shared.Data.Core
   {
     string Name { get; }
 
-    IList<IDbDataParameter> Parameters { get; }
+    DbParameterCollection Parameters { get; }
     object InvokeScalar();
     Task<object> InvokeScalarAsync(CancellationToken cancellationToken = default);
 

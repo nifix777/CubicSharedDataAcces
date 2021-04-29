@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
+using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Cubic.Shared.Data.Core.Schema
 {
@@ -62,6 +66,42 @@ namespace Cubic.Shared.Data.Core.Schema
     public static bool CanGetColumnSchema(this IDataReader reader)
     {
       return reader is DbDataReader;
+    }
+
+    public static Task<IReadOnlyCollection<DataSourceInstance>> GetDataSourcesAsync(DbProviderFactory providerFactory, CancellationToken cancellation)
+    {
+      var tcs = new TaskCompletionSource<IReadOnlyCollection<DataSourceInstance>>();
+
+      if (!providerFactory.CanCreateDataSourceEnumerator)
+      {
+        tcs.SetResult(new List<DataSourceInstance>());
+      }
+      else
+      {
+        Task.Run(() =>
+        {
+          var datasources = providerFactory.CreateDataSourceEnumerator()?.GetDataSources();
+
+          tcs.SetResult(GetFromDataTable(datasources));
+        }, cancellation).ConfigureAwait(false);
+      }
+
+      return tcs.Task;
+    }
+
+    public static IReadOnlyCollection<DataSourceInstance> GetFromDataTable(DataTable datasources)
+    {
+      var list = new List<DataSourceInstance>(datasources?.Rows.Count ?? 5);
+
+      foreach (DataRow row in datasources.Rows)
+      {
+        var instancename = row.IsNull(1) ? string.Empty : row[1].ToString();
+        var isclusterd = row.IsNull(2) ? (bool?)null : Convert.ToBoolean(row[2]);
+
+        list.Add(new DataSourceInstance(row[0].ToString(), instancename, isclusterd, row[3].ToString(), row[4].ToString()));
+      }
+
+      return list.AsReadOnly();
     }
   }
 }

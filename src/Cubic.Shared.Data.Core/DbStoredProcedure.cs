@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cubic.Shared.Data.Core
 {
-  public class DbStoredProcedure : IDbStoredProcedure
+  public class DbStoredProcedure : IDbStoredProcedure, IDisposable
   {
     private readonly string _name;
 
@@ -26,7 +26,6 @@ namespace Cubic.Shared.Data.Core
 
     public string Name => _name;
 
-    //public ICollection<IDbDataParameter> Parameters { get; private set; }
     public DbParameterCollection Parameters => _command.Parameters;
 
     private DbCommand CreateCommand()
@@ -34,7 +33,7 @@ namespace Cubic.Shared.Data.Core
       var cmd = _conn.CreateCommand();
       cmd.CommandType = CommandType.StoredProcedure;
       cmd.CommandText = _name;
-      //cmd.Parameters.AddRange(Parameters);
+
       return cmd;
     }
 
@@ -63,6 +62,11 @@ namespace Cubic.Shared.Data.Core
       //var cmd = CreateCommand();
 
       return await _command.ExecuteScalarAsync(cancellationToken);
+    }
+
+    public void Dispose()
+    {
+      ((IDisposable)_command)?.Dispose();
     }
   }
 }

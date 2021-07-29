@@ -20,7 +20,7 @@ namespace Cubic.Shared.Data.Core
 
     public static IDataParameter CreateParameter(this DbCommand command, string name, object value, Type type, Func<Type, DbType> typeMappingFunc = null)
     {
-      var typeMappingFunction = typeMappingFunc ?? DbTypeMapping.GetDbType;
+      var typeMappingFunction = typeMappingFunc ?? DbTypeMapping.Default.GetDbType;
       var parameter = command.CreateParameter();
       //parameter.ParameterName = name;
       parameter.ParameterName = GetParameterName(command.Connection, name);

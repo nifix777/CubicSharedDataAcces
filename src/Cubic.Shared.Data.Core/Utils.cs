@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Data.Common;
 using System.Text;
 
@@ -28,38 +29,35 @@ namespace Cubic.Shared.Data.Core
 		}
 #endif
 
-    public static IEnumerable<T> Map<T>(this DbDataReader reader)
+    public static IEnumerable<T> Map<T>(this IDataReader reader)
     {
-      if (reader.HasRows)
+      var properties = TypeDescriptor.GetProperties(typeof(T));
+
+      while (reader.Read())
       {
-        var properties = TypeDescriptor.GetProperties(typeof(T));
-
-        while (reader.Read())
+        var instance = Activator.CreateInstance<T>();
+        foreach (PropertyDescriptor prop in properties)
         {
-          var instance = Activator.CreateInstance<T>();
-          foreach (PropertyDescriptor prop in properties)
+          if (!prop.IsReadOnly)
           {
-            if (!prop.IsReadOnly)
+            var ordinal = reader.GetOrdinal(prop.Name.ToLower());
+            if (ordinal != -1)
             {
-              var ordinal = reader.GetOrdinal(prop.Name.ToLower());
-              if (ordinal != -1)
+              var value = reader.IsDBNull(ordinal) ? null : reader.GetValue(ordinal);
+
+              var converter = prop.Converter;
+
+              if (converter != null && converter.CanConvertFrom(reader.GetFieldType(ordinal)))
               {
-                var value = reader.IsDBNull(ordinal) ? null : reader.GetValue(ordinal);
-
-                var converter = prop.Converter;
-
-                if (converter != null && converter.CanConvertFrom(reader.GetFieldType(ordinal)))
-                {
-                  value = converter.ConvertFrom(value);
-                }
-                prop.SetValue(instance, value);
-
+                value = converter.ConvertFrom(value);
               }
+              prop.SetValue(instance, value);
+
             }
           }
-
-          yield return instance;
         }
+
+        yield return instance;
       }
     }
 

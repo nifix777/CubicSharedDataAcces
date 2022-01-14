@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Cubic.Shared.Data.Core
 {
@@ -17,7 +18,7 @@ namespace Cubic.Shared.Data.Core
       return (DbProviderFactory)DbProviderFactoryMethod.GetValue(connection);
     }
 
-    public static IEnumerable<T> Query<T>(this DbCommand queryCommand)
+    public static IEnumerable<T> Query<T>(this IDbCommand queryCommand)
     {
       using (var reader = queryCommand.ExecuteReader())
       {
@@ -25,10 +26,29 @@ namespace Cubic.Shared.Data.Core
       }
     }
 
-    public static DbCommand CreateDbCommand(this DbConnection connection, CommandType commandType = CommandType.Text)
+    public static IDbCommand CreateDbCommand(this IDbConnection connection, IDbTransaction transaction = null, CommandType commandType = CommandType.Text)
     {
       var cmd = connection.CreateCommand();
       cmd.CommandType = commandType;
+
+      if (transaction != null)
+      {
+        cmd.Transaction = transaction;
+      }
+
+      return cmd;
+    }
+
+    public static DbCommand CreateDbCommand(this DbConnection connection, DbTransaction transaction = null, CommandType commandType = CommandType.Text)
+    {
+      var cmd = connection.CreateCommand();
+      cmd.CommandType = commandType;
+
+      if (transaction != null)
+      {
+        cmd.Transaction = transaction;
+      }
+
       return cmd;
     }
 
@@ -38,7 +58,15 @@ namespace Cubic.Shared.Data.Core
       {
         cmd.CommandText = query;
 
-        cmd.AddParameters(parameters);
+        var parameter = new List<KeyValuePair<string, object>>();
+
+        var counter = 1;
+        foreach (var item in parameters)
+        {
+          parameter.Add(new KeyValuePair<string, object>($"p{counter}", item));
+        }
+
+        cmd.AddParameters(null, parameter.ToArray());
 
         return cmd.Query<T>();
       }
@@ -82,6 +110,33 @@ namespace Cubic.Shared.Data.Core
       }
 
 
+    }
+
+    public static async Task<int> ExecuteNonQueryAsync(this DbConnection connection, string rawSql, params object[] parameters)
+    {
+
+      using (var command = connection.CreateCommand())
+      {
+        command.CommandText = rawSql;
+        if (parameters != null)
+          foreach (var p in parameters)
+            command.Parameters.Add(p);
+        await connection.OpenAsync();
+        return await command.ExecuteNonQueryAsync();
+      }
+    }
+
+    public static async Task<T> ExecuteScalarAsync<T>(this DbConnection connection, string rawSql, params object[] parameters)
+    {
+      using (var command = connection.CreateCommand())
+      {
+        command.CommandText = rawSql;
+        if (parameters != null)
+          foreach (var p in parameters)
+            command.Parameters.Add(p);
+        await connection.OpenAsync();
+        return (T)await command.ExecuteScalarAsync();
+      }
     }
   }
 }

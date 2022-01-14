@@ -29,27 +29,25 @@ namespace Cubic.Shared.Data.Core
       return null;
     }
 
-    public static void AddParameters(this DbCommand command, object[] parameters, DbInformation dbInformation = null)
+    public static void AddParameters(this DbCommand command, DbInformation dbInformation = null, params KeyValuePair<string, object>[] parameters)
     {
       if (parameters != null)
       {
-        var counter = 0;
         foreach (var value in parameters)
         {
-          if (value is DbParameter)
-          {
-            command.Parameters.Add(value);
-          }
-          else
+          if (!(value is DbParameter))
           {
             var dbInfo = dbInformation ?? DbInformation.Create(command.Connection);
-            var name = dbInfo.GetParameterExpression(counter.ToString(), true);
+            var name = dbInfo.GetParameterExpression(value.Key, true);
             var parameter = command.CreateParameter();
             parameter.Direction = ParameterDirection.Input;
             parameter.ParameterName = name;
             parameter.Value = value;
             command.Parameters.Add(parameter);
-            counter++;
+          }
+          else
+          {
+            command.Parameters.Add(value);
           }
         }
       }

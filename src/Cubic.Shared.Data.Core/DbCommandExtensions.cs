@@ -63,13 +63,13 @@ namespace Cubic.Shared.Data.Core
       var builder = new StringBuilder(command.CommandText);
       var parameters = command.Parameters;
 
-      var useOtherParameterVlues = parametervalues != null;
+      var useOtherParameterValues = parametervalues != null;
       var formatprovider = culture ?? CultureInfo.InvariantCulture;
 
       for (int i = 0; i < parameters.Count; i++)
       {
         var name = parameters[i].ParameterName;
-        var usedValue = useOtherParameterVlues ? parametervalues[i] : parameters[i].Value;
+        var usedValue = useOtherParameterValues ? parametervalues[i] : parameters[i].Value;
 
         var convertiable = usedValue as IConvertible;
 
@@ -86,6 +86,21 @@ namespace Cubic.Shared.Data.Core
       return builder.ToString();
 
 
+    }
+
+    public static int GetHashCode(DbCommand command, bool withParameters)
+    {
+      var hash = command.CommandText.GetHashCode();
+
+      if(withParameters && command.Parameters?.Count > 0)
+      {
+        foreach (DbParameter item in command.Parameters)
+        {
+          hash ^= item.Value.GetHashCode();
+        }
+      }
+
+      return hash;
     }
   }
 }

@@ -60,5 +60,16 @@ namespace Cubic.Shared.Data.Core
         }
       }
     }
+
+    public static IDictionary<string, object> GetKeyValues(this IDataReader reader)
+    {
+      var data = new Dictionary<string, object>();
+      for (int i = 0; i < reader.FieldCount; i++)
+      {
+        data.Add(reader.GetName(i), reader.GetValue(i));
+      }
+
+      return data;
+    }
   }
 }
